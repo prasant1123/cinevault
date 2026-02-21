@@ -1,45 +1,39 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect, useState } from 'react';
+import { StatusBar } from 'react-native';
+import { AnimatedSplash } from './src/components';
+import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { store, persistor } from './src/app/store';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { TabNavigator } from './src/navigation';
+import { navigationRef } from './src/navigation/TabNavigator';
+export default function App() {
+  const [appReady, setAppReady] = useState(false);
+  const [showAnimatedSplash, setShowAnimatedSplash] = useState(true);
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+  useEffect(() => {
+    async function prepare() {
+      setAppReady(true);
+    }
+    prepare();
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+          <StatusBar barStyle="dark-content" />
+          {showAnimatedSplash && appReady && (
+            <AnimatedSplash onFinish={() => setShowAnimatedSplash(false)} />
+          )}
+          <NavigationContainer ref={navigationRef}>
+            <TabNavigator />
+          </NavigationContainer>
+        </SafeAreaView>
+      </PersistGate>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-export default App;
