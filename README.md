@@ -1,97 +1,136 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+CineVault is a React Native movie browsing application that displays movies with search, infinite scroll, pull-to-refresh, and favorites functionality.
 
-# Getting Started
+## 📐 Architecture Overview
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+CineVault follows a feature-based modular architecture for scalability and maintainability.
+src/
+├── app/ → Redux store & configuration
+├── components/ → Reusable UI components
+├── constants/ → Colors, images, app constants
+├── navigation/ → Stack & Tab navigation setup
+├── screens/ → Feature screens (Dashboard, Details, Favourite)
+├── services/ → RTK Query API + Redux slices
 
-## Step 1: Start Metro
+## Architecture Pattern
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+Redux Toolkit (RTK) for global state management
+RTK Query for API data fetching & caching
+React Navigation (Stack + Bottom Tabs) for navigation
+Redux Persist for persistent favorites storage
+Memoized filtering using useMemo
+Clean separation between:
+1.UI Components
+2.Business Logic
+3.API Layer
+4.Navigation
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## 📚 Libraries Used & Purpose
 
-```sh
-# Using npm
-npm start
+-Core
 
-# OR using Yarn
-yarn start
-```
+1. react – UI library . Core UI library for building declarative components using hooks like useState, useEffect, and useMemo.
+2. react-native – Mobile framework.Provides native components (View, Text, FlatList, etc.) to build cross-platform mobile apps using JavaScript.
 
-## Step 2: Build and run your app
+-Navigation
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+1. react-navigation/native - Core navigation container that manages navigation state and linking.
+2. react-navigation/native-stack -Provides native stack navigation (used for Dashboard → DetailsScreen).it has good native performance,Smooth transitions,Proper screen history handling
+3. react-navigation/bottom-tabs - better tab navigator than most other packages
+4. react-native-screens- Optimizes memory usage by using native navigation primitives.
+   Without it → screens stay mounted unnecessarily.
+5. -native-safe-area-context - Handles device safe areas (notches, status bars, rounded corners).
+   Prevents UI overlap issues.
+6. react-native-gesture-handler -Required by React Navigation.
+   Improves gesture performance (swipe back, tab gestures).
 
-### Android
+Used for Stack navigation and Bottom Tab navigation.
 
-```sh
-# Using npm
-npm run android
+State Management
 
-# OR using Yarn
-yarn android
-```
+1. reduxjs/toolkit - it has modern redux immplementation with simplified sliced creation,Built-in Immer for immutable updates and RTK Query integration
+2. react-redux - Connects React components to Redux store using:useSelector and useDispatch
+3. redux - Core Redux dependency (automatically required by RTK).
+4. redux-persist - Persists Redux state (favorites) to device storage.Without it:Favorites reset on app restart.
+5. react-native-async-storage/async-storage - Storage engine for Redux Persist.
+   Used for:
+   1.Global state
+   2.Favorites management
+   3.Persisting favorites across app restarts
 
-### iOS
+🌐 Data Fetching
+RTK Query (part of Redux Toolkit) = I used it instead of Axios/Fetch Because it provides:Automatic caching,Loading state management,Error handling,Refetching,Data memoization,Cleaner than writing custom async thunks.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+UI & Icons
+react-native-vector-icons/ionicons
+react-native-vector-icons/fontawesome6
+Used for tab icons and UI icons.
+Used because they have the most uptodate icons and lots of icons and are maintained regularly
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+Media & Video
+react-native-youtube-iframe
+react-native-webview
 
-```sh
-bundle install
-```
+Used for trailer playback functionality.I wanted to use the react-native-video but it cant play youtube videos so i had to use react-native-youtube-iframe.
 
-Then, and every time you update your native dependencies, run:
+Animation & Performance
+react-native-reanimated
+react-native-worklets
+react-native-nitro-modules
 
-```sh
-bundle exec pod install
-```
+Used for smoother animations and performance optimization.Best animation package to use.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## 🌐 API Source
 
-```sh
-# Using npm
-npm run ios
+This project uses the:
+IMDb Top 250 Movies API
 
-# OR using Yarn
-yarn ios
-```
+Endpoint:
+https://imdb236.p.rapidapi.com/api/imdb/top250-movies
+The API returns all 250 movies at once.
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## ✨ Features
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+🔍 Search movies (client-side filtering)
+🔄 Pull-to-refresh
+❤️ Add / Remove favorites
+💾 Persistent favorites using Redux Persist
+🎬 Movie details screen
+🎥 Trailer playback (YouTube)
+📱 Bottom tab navigation
+🎞 Animated splash screen
+🧠 Optimized rendering with memoization
 
-## Step 3: Modify your app
+## 🚀 Setup & Run Locally
 
-Now that you have successfully run the app, let's make changes!
+1️⃣ Clone the repository
+git clone https://github.com/prasant1123/cinevault.git
+cd CineVault
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+2️⃣ Install dependencies
+Using yarn: yarn
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+3️⃣ Start Metro bundler
+npx react-native start
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+4️⃣ Run on Android
+npx react-native run-android
 
-## Congratulations! :tada:
+Requirements:
+Android Studio installed
+Emulator running or physical device connected
 
-You've successfully run and modified your React Native App. :partying_face:
+5️⃣ Run on iOS (Mac only)
+cd ios
+pod install
+cd ..
+npx react-native run-ios
 
-### Now what?
+## 🏗 Technical Highlights
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+1.Type-safe navigation using NativeStackScreenProps
+2.Modular navigation structure
+3.Centralized API layer with RTK Query
+4.Persisted Redux store
+5.Optimized FlatList usage
+6.Clean component reusability
+7.Structured project organization
